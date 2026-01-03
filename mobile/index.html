@@ -1,1 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Tenses Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .sentence-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .sentence {
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .tense-section {
+            margin-bottom: 20px;
+        }
+        
+        .tense-section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .category-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .category-btn {
+            padding: 25px 20px;
+            font-size: 1.3em;
+            border: 3px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+        }
+        
+        .category-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
+        .tense-btn {
+            padding: 15px 20px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .tense-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .tense-btn:active {
+            transform: translateY(0);
+        }
+        
+        .tense-btn.correct {
+            background: #28a745 !important;
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+        
+        .tense-btn.incorrect {
+            background: #dc3545 !important;
+            color: white !important;
+            border-color: #dc3545 !important;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: none;
+        }
+        
+        .next-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .next-btn.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 English Tenses Game</h1>
+        <div class="score">Score: <span id="score">0</span> / <span id="total">0</span></div>
+        
+        <div class="sentence-box">
+            <div class="sentence" id="sentence"></div>
+        </div>
+        
+        <div class="feedback" id="feedback">
+            <div class="feedback-title" id="feedbackTitle"></div>
+            <div class="feedback-text" id="feedbackText"></div>
+        </div>
+        
+        <div id="categoryButtons" class="category-buttons">
+            <button class="category-btn" onclick="selectCategory('Past')">⏮️ PAST</button>
+            <button class="category-btn" onclick="selectCategory('Present')">⏸️ PRESENT</button>
+            <button class="category-btn" onclick="selectCategory('Future')">⏭️ FUTURE</button>
+        </div>
+        
+        <div id="tenseButtonsContainer" style="display: none;">
+            <div class="tense-section-title" id="selectedCategoryTitle"></div>
+            <button class="back-btn" onclick="backToCategories()">← Back to Categories</button>
+            <div class="buttons-grid" id="tenseButtons"></div>
+        </div>
+        
+        <button class="next-btn" id="nextBtn">Next Question →</button>
+    </div>
 
+    <script>
+        const tenses = [
+            {
+                name: "Simple Present",
+                type: "Simple",
+                timeframe: "Present",
+                examples: [
+                    { text: "I work at a bank.", reason: "Permanent situation/job" },
+                    { text: "She drinks coffee every morning.", reason: "Daily habit/routine" },
+                    { text: "The sun rises in the east.", reason: "General truth/fact" },
+                    { text: "Water boils at 100°C.", reason: "Scientific fact" },
+                    { text: "The train leaves at 6 PM tomorrow.", reason: "Scheduled future event" },
+                    { text: "Dogs bark when they are excited.", reason: "General behavior/truth" },
+                    { text: "My brother plays guitar in a band.", reason: "Regular activity/hobby" },
+                    { text: "We visit our grandparents on Sundays.", reason: "Weekly routine" },
+                    { text: "The Earth revolves around the Sun.", reason: "Scientific fact" },
+                    { text: "Where do you live?", reason: "Question about permanent situation" },
+                    { text: "What does she do for a living?", reason: "Question about habitual activity/job" },
+                    { text: "How often do they exercise?", reason: "Question about frequency of routine" },
+                    { text: "Why do cats sleep so much?", reason: "Question about general behavior/habit" },
+                    { text: "I don't eat meat.", reason: "Negative statement about permanent habit" },
+                    { text: "She doesn't like spicy food.", reason: "Negative statement about permanent preference" },
+                    { text: "They don't speak French.", reason: "Negative statement about ability/habit" }
+                ],
+                explanation: "Simple Present is used for habits, routines, general truths, permanent situations, and scheduled future events."
+            },
+            {
+                name: "Simple Past",
+                type: "Simple",
+                timeframe: "Past",
+                examples: [
+                    { text: "I walked to school yesterday.", reason: "Completed action with specific past time ('yesterday')" },
+                    { text: "She lived in Paris for five years.", reason: "Finished period in the past" },
+                    { text: "They visited their grandmother last week.", reason: "Completed action with specific time ('last week')" },
+                    { text: "He opened the door, walked in, and sat down.", reason: "Sequence of completed past actions" },
+                    { text: "Mozart wrote over 600 pieces of music.", reason: "Historical fact about deceased person" },
+                    { text: "We watched a movie last night.", reason: "Completed action with specific time" },
+                    { text: "The concert started at 8 PM.", reason: "Completed action at specific past time" },
+                    { text: "I finished my homework before dinner.", reason: "Completed action before another past time" },
+                    { text: "She called me three times yesterday.", reason: "Completed repeated action in the past" },
+                    { text: "Where did you go last summer?", reason: "Question about completed past action with specific time" },
+                    { text: "What did she say?", reason: "Question about completed past action" },
+                    { text: "When did they arrive?", reason: "Question about timing of past event" },
+                    { text: "Why did he leave early?", reason: "Question about reason for past action" },
+                    { text: "I didn't see that movie.", reason: "Negative statement about past action not done" },
+                    { text: "She didn't call me back.", reason: "Negative statement about uncompleted past action" },
+                    { text: "They didn't know the answer.", reason: "Negative statement about past state/knowledge" }
+                ],
+                explanation: "Simple Past is used for completed actions in the past, past habits, and sequences of past events."
+            },
+            {
+                name: "Past Progressive",
+                type: "Progressive",
+                timeframe: "Past",
+                examples: [
+                    { text: "I was watching TV at 8 PM yesterday.", reason: "Action in progress at specific past time" },
+                    { text: "She was reading when the phone rang.", reason: "Ongoing action interrupted by another past action" },
+                    { text: "While I was cooking, he was cleaning.", reason: "Two parallel actions in progress at same past time" },
+                    { text: "The birds were singing and the sun was shining.", reason: "Background description/setting in narrative" },
+                    { text: "What were you doing at midnight?", reason: "Question about action in progress at specific past time" },
+                    { text: "They were sleeping when I arrived.", reason: "Ongoing action when another action occurred" },
+                    { text: "It was raining all day yesterday.", reason: "Continuous action throughout past time period" },
+                    { text: "We were driving home when we saw the accident.", reason: "Ongoing action when something else happened" },
+                    { text: "He was always talking in class.", reason: "Repeated annoying past habit (with 'always')" },
+                    { text: "Where were you going?", reason: "Question about direction of ongoing past action" },
+                    { text: "Who was calling you?", reason: "Question about ongoing past action" },
+                    { text: "Why were they shouting?", reason: "Question about reason for ongoing past action" },
+                    { text: "I wasn't listening to you.", reason: "Negative statement about action not in progress" },
+                    { text: "She wasn't feeling well yesterday.", reason: "Negative statement about past temporary state" },
+                    { text: "They weren't paying attention.", reason: "Negative statement about action not happening" }
+                ],
+                explanation: "Past Progressive is used for actions in progress at a specific past time, interrupted actions, parallel actions, and background information."
+            },
+            {
+                name: "Past Perfect",
+                type: "Perfect",
+                timeframe: "Past",
+                examples: [
+                    { text: "I had already eaten when she arrived.", reason: "First action (eating) completed before second past action (arrival)" },
+                    { text: "She had never seen snow before she moved to Canada.", reason: "Experience (or lack of) up to a past point in time" },
+                    { text: "By 2010, they had lived there for 20 years.", reason: "Duration completed up to specific past time" },
+                    { text: "He was tired because he had worked all day.", reason: "Earlier action (work) caused later past state (tiredness)" },
+                    { text: "Had you met him before the party?", reason: "Question about experience before past event" },
+                    { text: "The movie had already started when we got there.", reason: "Earlier action (movie starting) before later action (arrival)" },
+                    { text: "I had just finished cleaning when the guests arrived.", reason: "Recently completed action before another past action" },
+                    { text: "She realized she had forgotten her keys.", reason: "Earlier action (forgetting) before later realization" },
+                    { text: "They had saved enough money before they bought the house.", reason: "First action completed before second past action" },
+                    { text: "Where had you been before I saw you?", reason: "Question about location prior to past event" },
+                    { text: "What had she told you?", reason: "Question about earlier past action before another past event" },
+                    { text: "Why had they left so early?", reason: "Question about reason for action before past reference point" },
+                    { text: "I hadn't seen him in years.", reason: "Negative statement about lack of experience up to past point" },
+                    { text: "She hadn't finished her work.", reason: "Negative statement about uncompleted action before past time" },
+                    { text: "They hadn't heard the news yet.", reason: "Negative statement about information not received by past time" }
+                ],
+                explanation: "Past Perfect is used for actions completed before another past action, or experiences before a past time."
+            },
+            {
+                name: "Past Perfect Progressive",
+                type: "Perfect Progressive",
+                timeframe: "Past",
+                examples: [
+                    { text: "I had been working for 10 hours when I finally went home.", reason: "Duration of action up to specific past moment" },
+                    { text: "She was tired because she had been running.", reason: "Continuous earlier action caused later past state" },
+                    { text: "They had been living in Tokyo for three years before they moved.", reason: "Duration of situation before past event" },
+                    { text: "Had you been waiting long when the bus arrived?", reason: "Question about duration before past event" },
+                    { text: "The ground was wet because it had been raining.", reason: "Recent continuous action caused visible past result" },
+                    { text: "He had been studying all night before the exam.", reason: "Continuous action throughout period before past event" },
+                    { text: "We had been driving for hours when we finally stopped.", reason: "Long duration emphasizing continuous action before stopping" },
+                    { text: "My eyes hurt because I had been reading for too long.", reason: "Extended continuous action caused past consequence" },
+                    { text: "She had been feeling sick for days before seeing a doctor.", reason: "Duration of ongoing state before past action" },
+                    { text: "How long had you been working there?", reason: "Question about duration up to past point" },
+                    { text: "What had they been doing?", reason: "Question about continuous activity before past reference" },
+                    { text: "I hadn't been sleeping well.", reason: "Negative statement about lack of continuous action over past period" },
+                    { text: "She hadn't been feeling well for weeks.", reason: "Negative continuous state over past period" },
+                    { text: "They hadn't been paying attention.", reason: "Negative statement about lack of continuous action" }
+                ],
+                explanation: "Past Perfect Progressive emphasizes duration of actions up to a past moment, often showing cause of past situations."
+            },
+            {
+                name: "Present Progressive",
+                type: "Progressive",
+                timeframe: "Present",
+                examples: [
+                    { text: "I am writing an email right now.", reason: "Action happening at this moment" },
+                    { text: "She is studying for her exam this week.", reason: "Temporary situation in current time period" },
+                    { text: "They are meeting us at 7 PM tonight.", reason: "Future arrangement already planned" },
+                    { text: "He is always complaining!", reason: "Annoying repeated habit (with 'always')" },
+                    { text: "The world is getting warmer.", reason: "Ongoing change/trend" },
+                    { text: "We are having dinner at the moment.", reason: "Action in progress right now" },
+                    { text: "Look! It is snowing outside.", reason: "Action happening now (observable)" },
+                    { text: "Why are you laughing?", reason: "Question about action in progress at speaking moment" },
+                    { text: "The children are playing in the garden.", reason: "Current ongoing activity" },
+                    { text: "What are you doing?", reason: "Question about current action" },
+                    { text: "Where is she going?", reason: "Question about direction of ongoing action" },
+                    { text: "Who is calling me?", reason: "Question about current action" },
+                    { text: "I'm not working today.", reason: "Negative statement about current situation" },
+                    { text: "She isn't listening to me.", reason: "Negative statement about action not happening now" },
+                    { text: "They aren't coming to the party.", reason: "Negative statement about future arrangement" }
+                ],
+                explanation: "Present Progressive is used for actions happening now, temporary situations, future arrangements, and annoying habits."
+            },
+            {
+                name: "Present Perfect",
+                type: "Perfect",
+                timeframe: "Present",
+                examples: [
+                    { text: "I have finished my homework.", reason: "Recently completed with present result (homework is done now)" },
+                    { text: "She has lived here for ten years.", reason: "Action started in past, continues to present" },
+                    { text: "Have you ever been to Japan?", reason: "Question about life experience up to now" },
+                    { text: "They have just arrived.", reason: "Recent past action with present relevance" },
+                    { text: "He has worked here since 2020.", reason: "Action continuing from past starting point to present" },
+                    { text: "We have seen that movie three times.", reason: "Life experience with indefinite past time" },
+                    { text: "I have never eaten sushi.", reason: "Negative life experience up to now" },
+                    { text: "She has already read that book.", reason: "Completed action with present relevance (she knows it now)" },
+                    { text: "Have you met my sister?", reason: "Question about experience up to now" },
+                    { text: "Where have you been?", reason: "Question about recent past with present relevance" },
+                    { text: "What has happened?", reason: "Question about recent event affecting present" },
+                    { text: "How long have you known her?", reason: "Question about duration from past to present" },
+                    { text: "I haven't seen him lately.", reason: "Negative statement about lack of recent experience" },
+                    { text: "She hasn't called me yet.", reason: "Negative statement about expected action not completed" },
+                    { text: "They haven't finished the project.", reason: "Negative statement about incomplete action" }
+                ],
+                explanation: "Present Perfect is used for past actions with present relevance, life experiences, actions continuing to now, and recent past."
+            },
+            {
+                name: "Present Perfect Progressive",
+                type: "Perfect Progressive",
+                timeframe: "Present",
+                examples: [
+                    { text: "I have been studying English for five years.", reason: "Ongoing action from past to present with emphasis on duration" },
+                    { text: "She has been working here since January.", reason: "Continuous action from starting point to now" },
+                    { text: "You look tired. Have you been exercising?", reason: "Question about recent activity with visible present result" },
+                    { text: "They have been waiting for an hour.", reason: "Continuous action still ongoing, emphasizing duration" },
+                    { text: "It has been raining all day.", reason: "Action continuing throughout time period to now" },
+                    { text: "How long have you been learning to drive?", reason: "Question about duration of ongoing action" },
+                    { text: "We have been living in this apartment since 2020.", reason: "Continuous situation from past point to present" },
+                    { text: "I have been trying to call you all morning.", reason: "Repeated attempts over period continuing to now" },
+                    { text: "He has been working on that project for months.", reason: "Long-term ongoing activity emphasizing duration" },
+                    { text: "What have you been doing?", reason: "Question about recent continuous activity" },
+                    { text: "Where have you been staying?", reason: "Question about ongoing temporary situation" },
+                    { text: "I haven't been sleeping well.", reason: "Negative statement about lack of continuous action over recent period" },
+                    { text: "She hasn't been feeling good lately.", reason: "Negative continuous state over recent period" },
+                    { text: "They haven't been answering their phones.", reason: "Negative statement about lack of recent continuous action" }
+                ],
+                explanation: "Present Perfect Progressive emphasizes the duration of actions from past to present, or shows recent activity with present results."
+            },
+            {
+                name: "Future with Will",
+                type: "Simple",
+                timeframe: "Future",
+                examples: [
+                    { text: "It will rain tomorrow.", reason: "Prediction about future weather" },
+                    { text: "I'll help you with that.", reason: "Spontaneous decision/offer made at speaking moment" },
+                    { text: "I'll call you later.", reason: "Promise about future action" },
+                    { text: "You'll regret this!", reason: "Threat/warning about future consequence" },
+                    { text: "She will be 30 next year.", reason: "Future fact/certainty" },
+                    { text: "The meeting will start soon.", reason: "Prediction about near future" },
+                    { text: "I think they will win the game.", reason: "Prediction with 'think'" },
+                    { text: "We will arrive around 5 PM.", reason: "Future plan stated as fact" },
+                    { text: "Will you marry me?", reason: "Proposal/request about future" },
+                    { text: "What will you do?", reason: "Question about future action/decision" },
+                    { text: "Where will they go?", reason: "Question about future destination" },
+                    { text: "When will she arrive?", reason: "Question about timing of future event" },
+                    { text: "I will not give up.", reason: "Negative statement of future determination" },
+                    { text: "She won't tell anyone.", reason: "Negative promise about future" },
+                    { text: "They won't be there.", reason: "Negative prediction about future presence" }
+                ],
+                explanation: "Future with 'will' is used for predictions, spontaneous decisions, promises, offers, threats, and future facts."
+            },
+            {
+                name: "Future with Going To",
+                type: "Simple",
+                timeframe: "Future",
+                examples: [
+                    { text: "I'm going to visit my parents next month.", reason: "Pre-planned intention/arrangement" },
+                    { text: "She's going to study medicine.", reason: "Decided future plan/intention" },
+                    { text: "Look at those clouds! It's going to rain.", reason: "Prediction based on present evidence (clouds)" },
+                    { text: "They're going to get married in June.", reason: "Future plan already arranged" },
+                    { text: "We're going to be late!", reason: "Prediction based on current situation" },
+                    { text: "He's going to buy a new car.", reason: "Stated intention/plan" },
+                    { text: "Are you going to watch the game tonight?", reason: "Question about planned future action" },
+                    { text: "I'm not going to tell anyone your secret.", reason: "Strong negative intention/promise" },
+                    { text: "The building is going to collapse!", reason: "Imminent prediction based on visible evidence" },
+                    { text: "What are you going to do?", reason: "Question about future plan/intention" },
+                    { text: "Where are they going to stay?", reason: "Question about planned future arrangement" },
+                    { text: "When is she going to arrive?", reason: "Question about timing of planned action" },
+                    { text: "I'm not going to lie to you.", reason: "Negative statement of strong intention" },
+                    { text: "She isn't going to accept the offer.", reason: "Negative decision about future" },
+                    { text: "They aren't going to come.", reason: "Negative statement about plan not happening" }
+                ],
+                explanation: "Future with 'going to' is used for plans, intentions, and predictions based on present evidence."
+            },
+            {
+                name: "Future Progressive",
+                type: "Progressive",
+                timeframe: "Future",
+                examples: [
+                    { text: "I will be working at 3 PM tomorrow.", reason: "Action that will be in progress at specific future time" },
+                    { text: "This time next week, we'll be lying on a beach.", reason: "Imagining action in progress at future moment" },
+                    { text: "Will you be using the car tonight?", reason: "Polite question about future plans" },
+                    { text: "She'll be arriving around 6 PM.", reason: "Expected future action in progress" },
+                    { text: "They'll be traveling through Europe all summer.", reason: "Continuous action throughout future period" },
+                    { text: "I'll be thinking of you.", reason: "Ongoing future action/state" },
+                    { text: "What will you be doing this time next year?", reason: "Question about future ongoing action at specific time" },
+                    { text: "We'll be waiting for you at the station.", reason: "Future action that will be in progress" },
+                    { text: "The sun will be setting when we arrive.", reason: "Natural process in progress at future time" },
+                    { text: "Where will you be staying?", reason: "Question about future ongoing situation" },
+                    { text: "Who will be attending the meeting?", reason: "Question about future participants" },
+                    { text: "I won't be working tomorrow.", reason: "Negative statement about future ongoing action" },
+                    { text: "She won't be joining us.", reason: "Negative statement about future participation" },
+                    { text: "They won't be traveling this year.", reason: "Negative statement about future plans" }
+                ],
+                explanation: "Future Progressive describes actions that will be in progress at specific future times, or makes polite inquiries about plans."
+            },
+            {
+                name: "Future Perfect",
+                type: "Perfect",
+                timeframe: "Future",
+                examples: [
+                    { text: "I will have finished this project by Friday.", reason: "Action will be completed before future deadline" },
+                    { text: "By 2030, they will have lived here for 20 years.", reason: "Duration will be reached by future point" },
+                    { text: "She will have graduated before you arrive.", reason: "Action will be completed before future event" },
+                    { text: "Will you have completed the report by tomorrow?", reason: "Question about completion before future time" },
+                    { text: "By the time you read this, I will have left.", reason: "Action will be finished before future reading" },
+                    { text: "We will have eaten by the time you get here.", reason: "Action will be done before future arrival" },
+                    { text: "He will have saved enough money by next year.", reason: "Goal will be reached by future date" },
+                    { text: "They will have been married for 10 years in June.", reason: "Duration will be achieved by future month" },
+                    { text: "I will have finished the book by tonight.", reason: "Completion expected before future time" },
+                    { text: "How long will you have worked here by then?", reason: "Question about duration at future point" },
+                    { text: "What will she have accomplished?", reason: "Question about completion by future time" },
+                    { text: "I won't have finished by then.", reason: "Negative statement about completion before future time" },
+                    { text: "She won't have heard the news yet.", reason: "Negative prediction about knowledge at future point" },
+                    { text: "They won't have arrived by 5 PM.", reason: "Negative statement about completion before deadline" }
+                ],
+                explanation: "Future Perfect describes actions that will be completed before a specific future time or event."
+            },
+            {
+                name: "Future Perfect Progressive",
+                type: "Perfect Progressive",
+                timeframe: "Future",
+                examples: [
+                    { text: "By next month, I will have been working here for five years.", reason: "Duration will be reached by future point" },
+                    { text: "In June, we'll have been living in this house for a decade.", reason: "Continuous situation will reach duration milestone" },
+                    { text: "By the time she arrives, I'll have been waiting for two hours.", reason: "Duration of continuous action by future event" },
+                    { text: "Will you have been studying English for long when you take the exam?", reason: "Question about duration before future event" },
+                    { text: "Next year, they'll have been married for 25 years.", reason: "Continuous relationship will reach anniversary" },
+                    { text: "By tomorrow, I'll have been working on this for a week.", reason: "Duration of ongoing work by future time" },
+                    { text: "He will have been teaching for 30 years when he retires.", reason: "Career duration at future retirement point" },
+                    { text: "We will have been driving for 10 hours by the time we arrive.", reason: "Continuous journey duration at future destination" },
+                    { text: "She will have been living abroad for five years by December.", reason: "Duration of continuous situation by future date" },
+                    { text: "How long will you have been waiting?", reason: "Question about duration at future point" },
+                    { text: "I won't have been working here very long.", reason: "Negative statement about short duration by future time" },
+                    { text: "She won't have been studying for long enough.", reason: "Negative statement about insufficient duration" },
+                    { text: "They won't have been living there for a year yet.", reason: "Negative statement about duration not reached by future time" }
+                ],
+                explanation: "Future Perfect Progressive emphasizes the duration of continuous actions up to a specific future time."
+            }
+        ];
+
+        let score = 0;
+        let total = 0;
+        let currentQuestion = null;
+        let selectedCategory = null;
+
+        const pastTenses = tenses.filter(t => t.timeframe === "Past");
+        const presentTenses = tenses.filter(t => t.timeframe === "Present");
+        const futureTenses = tenses.filter(t => t.timeframe === "Future");
+
+        function getRandomQuestion() {
+            const randomTense = tenses[Math.floor(Math.random() * tenses.length)];
+            const randomExample = randomTense.examples[Math.floor(Math.random() * randomTense.examples.length)];
+            return {
+                sentence: randomExample.text,
+                correctTense: randomTense.name,
+                type: randomTense.type,
+                timeframe: randomTense.timeframe,
+                reason: randomExample.reason,
+                explanation: randomTense.explanation
+            };
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            document.getElementById('categoryButtons').style.display = 'none';
+            document.getElementById('tenseButtonsContainer').style.display = 'block';
+            
+            let tensesArray;
+            let emoji;
+            if (category === 'Past') {
+                tensesArray = pastTenses;
+                emoji = '⏮️';
+            } else if (category === 'Present') {
+                tensesArray = presentTenses;
+                emoji = '⏸️';
+            } else {
+                tensesArray = futureTenses;
+                emoji = '⏭️';
+            }
+            
+            document.getElementById('selectedCategoryTitle').textContent = emoji + ' ' + category.toUpperCase() + ' TENSES';
+            createTenseButtons(tensesArray);
+        }
+        
+        function backToCategories() {
+            document.getElementById('categoryButtons').style.display = 'grid';
+            document.getElementById('tenseButtonsContainer').style.display = 'none';
+            selectedCategory = null;
+        }
+        
+        function createTenseButtons(tensesArray) {
+            const container = document.getElementById('tenseButtons');
+            container.innerHTML = '';
+            
+            tensesArray.forEach(tense => {
+                const btn = document.createElement('button');
+                btn.className = 'tense-btn';
+                btn.textContent = tense.name;
+                btn.onclick = () => checkAnswer(tense.name);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedTense) {
+            total++;
+            const feedback = document.getElementById('feedback');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const feedbackText = document.getElementById('feedbackText');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Disable all buttons in current view
+            document.querySelectorAll('.tense-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.style.cursor = 'not-allowed';
+                btn.style.opacity = '0.6';
+            });
+            
+            // Check if correct answer is in the selected category
+            const correctTenseInCategory = document.querySelector(`.tense-btn:not([disabled])`);
+            const correctTenseObj = tenses.find(t => t.name === currentQuestion.correctTense);
+            const correctTenseCategory = correctTenseObj.timeframe;
+            
+            // Highlight buttons
+            document.querySelectorAll('.tense-btn').forEach(btn => {
+                if (btn.textContent === currentQuestion.correctTense) {
+                    btn.classList.add('correct');
+                    btn.style.opacity = '1';
+                }
+                if (btn.textContent === selectedTense && selectedTense !== currentQuestion.correctTense) {
+                    btn.classList.add('incorrect');
+                    btn.style.opacity = '1';
+                }
+            });
+            
+            if (selectedTense === currentQuestion.correctTense) {
+                score++;
+                feedback.className = 'feedback correct show';
+                feedbackTitle.textContent = '✅ Correct!';
+                feedbackText.innerHTML = `
+                    <strong>Tense:</strong> ${currentQuestion.correctTense}<br>
+                    <strong>Type:</strong> ${currentQuestion.type} tense<br>
+                    <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                    <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
+                    ${currentQuestion.reason}<br><br>
+                    <strong>General usage:</strong><br>
+                    ${currentQuestion.explanation}
+                `;
+            } else {
+                feedback.className = 'feedback incorrect show';
+                feedbackTitle.textContent = '❌ Incorrect';
+                
+                // Check if correct answer was in a different category
+                if (selectedCategory !== correctTenseCategory) {
+                    feedbackText.innerHTML = `
+                        <strong>Your answer:</strong> ${selectedTense} (${selectedCategory})<br>
+                        <strong>Correct answer:</strong> ${currentQuestion.correctTense}<br>
+                        <strong>⚠️ Note:</strong> The correct answer is in the <strong>${correctTenseCategory}</strong> category, but you selected from <strong>${selectedCategory}</strong>!<br>
+                        <strong>Type:</strong> ${currentQuestion.type} tense<br>
+                        <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                        <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.reason}<br><br>
+                        <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.explanation}
+                    `;
+                } else {
+                    feedbackText.innerHTML = `
+                        <strong>Your answer:</strong> ${selectedTense}<br>
+                        <strong>Correct answer:</strong> ${currentQuestion.correctTense}<br>
+                        <strong>Type:</strong> ${currentQuestion.type} tense<br>
+                        <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                        <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.reason}<br><br>
+                        <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.explanation}
+                    `;
+                }
+            }
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('total').textContent = total;
+            nextBtn.classList.add('show');
+        }
+
+        function loadNewQuestion() {
+            currentQuestion = getRandomQuestion();
+            document.getElementById('sentence').textContent = currentQuestion.sentence;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback';
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.classList.remove('show');
+            
+            // Reset to category selection
+            document.getElementById('categoryButtons').style.display = 'grid';
+            document.getElementById('tenseButtonsContainer').style.display = 'none';
+            selectedCategory = null;
+        }
+
+        document.getElementById('nextBtn').onclick = loadNewQuestion;
+
+        // Initialize game
+        loadNewQuestion();
+    </script>
+</body>
+</html>
