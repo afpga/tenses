@@ -78,6 +78,52 @@
             margin-bottom: 10px;
         }
         
+        .category-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .category-btn {
+            padding: 25px 20px;
+            font-size: 1.3em;
+            border: 3px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+        }
+        
+        .category-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
         .tense-btn {
             padding: 15px 20px;
             font-size: 1em;
@@ -175,7 +221,10 @@
 <body>
     <div class="container">
         <h1>🎯 English Tenses Game</h1>
-        <div class="score">Score: <span id="score">0</span> / <span id="total">0</span></div>
+        <div class="score">
+            Question: <span id="total">0</span> / 50 | 
+            Score: <span id="score">0</span> correct
+        </div>
         
         <div class="sentence-box">
             <div class="sentence" id="sentence"></div>
@@ -186,19 +235,16 @@
             <div class="feedback-text" id="feedbackText"></div>
         </div>
         
-        <div class="tense-section">
-            <div class="tense-section-title">⏮️ PAST TENSES</div>
-            <div class="buttons-grid" id="pastButtons"></div>
+        <div id="categoryButtons" class="category-buttons">
+            <button class="category-btn" onclick="selectCategory('Past')">⏮️ PAST</button>
+            <button class="category-btn" onclick="selectCategory('Present')">⏸️ PRESENT</button>
+            <button class="category-btn" onclick="selectCategory('Future')">⏭️ FUTURE</button>
         </div>
         
-        <div class="tense-section">
-            <div class="tense-section-title">⏸️ PRESENT TENSES</div>
-            <div class="buttons-grid" id="presentButtons"></div>
-        </div>
-        
-        <div class="tense-section">
-            <div class="tense-section-title">⏭️ FUTURE TENSES</div>
-            <div class="buttons-grid" id="futureButtons"></div>
+        <div id="tenseButtonsContainer" style="display: none;">
+            <div class="tense-section-title" id="selectedCategoryTitle"></div>
+            <button class="back-btn" onclick="backToCategories()">← Back to Categories</button>
+            <div class="buttons-grid" id="tenseButtons"></div>
         </div>
         
         <button class="next-btn" id="nextBtn">Next Question →</button>
@@ -210,6 +256,7 @@
                 name: "Simple Present",
                 type: "Simple",
                 timeframe: "Present",
+                formula: "I/you/we/they + base verb | he/she/it + verb-s/es",
                 examples: [
                     { text: "I work at a bank.", reason: "Permanent situation/job" },
                     { text: "She drinks coffee every morning.", reason: "Daily habit/routine" },
@@ -234,6 +281,7 @@
                 name: "Simple Past",
                 type: "Simple",
                 timeframe: "Past",
+                formula: "subject + verb-ed (regular) | subject + irregular past form (went, saw, ate, etc.)",
                 examples: [
                     { text: "I walked to school yesterday.", reason: "Completed action with specific past time ('yesterday')" },
                     { text: "She lived in Paris for five years.", reason: "Finished period in the past" },
@@ -258,6 +306,7 @@
                 name: "Past Progressive",
                 type: "Progressive",
                 timeframe: "Past",
+                formula: "I/he/she/it + was + verb-ing | you/we/they + were + verb-ing",
                 examples: [
                     { text: "I was watching TV at 8 PM yesterday.", reason: "Action in progress at specific past time" },
                     { text: "She was reading when the phone rang.", reason: "Ongoing action interrupted by another past action" },
@@ -281,6 +330,7 @@
                 name: "Past Perfect",
                 type: "Perfect",
                 timeframe: "Past",
+                formula: "subject + had + past participle (verb-ed or irregular)",
                 examples: [
                     { text: "I had already eaten when she arrived.", reason: "First action (eating) completed before second past action (arrival)" },
                     { text: "She had never seen snow before she moved to Canada.", reason: "Experience (or lack of) up to a past point in time" },
@@ -304,6 +354,7 @@
                 name: "Past Perfect Progressive",
                 type: "Perfect Progressive",
                 timeframe: "Past",
+                formula: "subject + had been + verb-ing",
                 examples: [
                     { text: "I had been working for 10 hours when I finally went home.", reason: "Duration of action up to specific past moment" },
                     { text: "She was tired because she had been running.", reason: "Continuous earlier action caused later past state" },
@@ -326,6 +377,7 @@
                 name: "Present Progressive",
                 type: "Progressive",
                 timeframe: "Present",
+                formula: "I + am + verb-ing | he/she/it + is + verb-ing | you/we/they + are + verb-ing",
                 examples: [
                     { text: "I am writing an email right now.", reason: "Action happening at this moment" },
                     { text: "She is studying for her exam this week.", reason: "Temporary situation in current time period" },
@@ -349,6 +401,7 @@
                 name: "Present Perfect",
                 type: "Perfect",
                 timeframe: "Present",
+                formula: "I/you/we/they + have + past participle | he/she/it + has + past participle",
                 examples: [
                     { text: "I have finished my homework.", reason: "Recently completed with present result (homework is done now)" },
                     { text: "She has lived here for ten years.", reason: "Action started in past, continues to present" },
@@ -372,6 +425,7 @@
                 name: "Present Perfect Progressive",
                 type: "Perfect Progressive",
                 timeframe: "Present",
+                formula: "I/you/we/they + have been + verb-ing | he/she/it + has been + verb-ing",
                 examples: [
                     { text: "I have been studying English for five years.", reason: "Ongoing action from past to present with emphasis on duration" },
                     { text: "She has been working here since January.", reason: "Continuous action from starting point to now" },
@@ -394,6 +448,7 @@
                 name: "Future with Will",
                 type: "Simple",
                 timeframe: "Future",
+                formula: "subject + will + base verb",
                 examples: [
                     { text: "It will rain tomorrow.", reason: "Prediction about future weather" },
                     { text: "I'll help you with that.", reason: "Spontaneous decision/offer made at speaking moment" },
@@ -417,6 +472,7 @@
                 name: "Future with Going To",
                 type: "Simple",
                 timeframe: "Future",
+                formula: "I + am going to + base verb | he/she/it + is going to + base verb | you/we/they + are going to + base verb",
                 examples: [
                     { text: "I'm going to visit my parents next month.", reason: "Pre-planned intention/arrangement" },
                     { text: "She's going to study medicine.", reason: "Decided future plan/intention" },
@@ -440,6 +496,7 @@
                 name: "Future Progressive",
                 type: "Progressive",
                 timeframe: "Future",
+                formula: "subject + will be + verb-ing",
                 examples: [
                     { text: "I will be working at 3 PM tomorrow.", reason: "Action that will be in progress at specific future time" },
                     { text: "This time next week, we'll be lying on a beach.", reason: "Imagining action in progress at future moment" },
@@ -462,6 +519,7 @@
                 name: "Future Perfect",
                 type: "Perfect",
                 timeframe: "Future",
+                formula: "subject + will have + past participle",
                 examples: [
                     { text: "I will have finished this project by Friday.", reason: "Action will be completed before future deadline" },
                     { text: "By 2030, they will have lived here for 20 years.", reason: "Duration will be reached by future point" },
@@ -484,6 +542,7 @@
                 name: "Future Perfect Progressive",
                 type: "Perfect Progressive",
                 timeframe: "Future",
+                formula: "subject + will have been + verb-ing",
                 examples: [
                     { text: "By next month, I will have been working here for five years.", reason: "Duration will be reached by future point" },
                     { text: "In June, we'll have been living in this house for a decade.", reason: "Continuous situation will reach duration milestone" },
@@ -506,6 +565,15 @@
         let score = 0;
         let total = 0;
         let currentQuestion = null;
+        let selectedCategory = null;
+        let startTime = Date.now();
+        const maxAttempts = 50;
+        
+        // Track statistics per tense
+        let tenseStats = {};
+        tenses.forEach(tense => {
+            tenseStats[tense.name] = { correct: 0, total: 0 };
+        });
 
         const pastTenses = tenses.filter(t => t.timeframe === "Past");
         const presentTenses = tenses.filter(t => t.timeframe === "Present");
@@ -520,18 +588,41 @@
                 type: randomTense.type,
                 timeframe: randomTense.timeframe,
                 reason: randomExample.reason,
-                explanation: randomTense.explanation
+                explanation: randomTense.explanation,
+                formula: randomTense.formula
             };
         }
 
-        function createButtons() {
-            createButtonGroup('pastButtons', pastTenses);
-            createButtonGroup('presentButtons', presentTenses);
-            createButtonGroup('futureButtons', futureTenses);
+        function selectCategory(category) {
+            selectedCategory = category;
+            document.getElementById('categoryButtons').style.display = 'none';
+            document.getElementById('tenseButtonsContainer').style.display = 'block';
+            
+            let tensesArray;
+            let emoji;
+            if (category === 'Past') {
+                tensesArray = pastTenses;
+                emoji = '⏮️';
+            } else if (category === 'Present') {
+                tensesArray = presentTenses;
+                emoji = '⏸️';
+            } else {
+                tensesArray = futureTenses;
+                emoji = '⏭️';
+            }
+            
+            document.getElementById('selectedCategoryTitle').textContent = emoji + ' ' + category.toUpperCase() + ' TENSES';
+            createTenseButtons(tensesArray);
         }
         
-        function createButtonGroup(containerId, tensesArray) {
-            const container = document.getElementById(containerId);
+        function backToCategories() {
+            document.getElementById('categoryButtons').style.display = 'grid';
+            document.getElementById('tenseButtonsContainer').style.display = 'none';
+            selectedCategory = null;
+        }
+        
+        function createTenseButtons(tensesArray) {
+            const container = document.getElementById('tenseButtons');
             container.innerHTML = '';
             
             tensesArray.forEach(tense => {
@@ -545,24 +636,31 @@
 
         function checkAnswer(selectedTense) {
             total++;
+            tenseStats[currentQuestion.correctTense].total++;
+            
             const feedback = document.getElementById('feedback');
             const feedbackTitle = document.getElementById('feedbackTitle');
             const feedbackText = document.getElementById('feedbackText');
             const nextBtn = document.getElementById('nextBtn');
             
-            // Disable all buttons and highlight correct/incorrect
+            // Disable all buttons in current view
             document.querySelectorAll('.tense-btn').forEach(btn => {
                 btn.disabled = true;
                 btn.style.cursor = 'not-allowed';
                 btn.style.opacity = '0.6';
-                
-                // Highlight the correct answer in green
+            });
+            
+            // Check if correct answer is in the selected category
+            const correctTenseInCategory = document.querySelector(`.tense-btn:not([disabled])`);
+            const correctTenseObj = tenses.find(t => t.name === currentQuestion.correctTense);
+            const correctTenseCategory = correctTenseObj.timeframe;
+            
+            // Highlight buttons
+            document.querySelectorAll('.tense-btn').forEach(btn => {
                 if (btn.textContent === currentQuestion.correctTense) {
                     btn.classList.add('correct');
                     btn.style.opacity = '1';
                 }
-                
-                // Highlight the incorrect answer in red (if different from correct)
                 if (btn.textContent === selectedTense && selectedTense !== currentQuestion.correctTense) {
                     btn.classList.add('incorrect');
                     btn.style.opacity = '1';
@@ -571,12 +669,15 @@
             
             if (selectedTense === currentQuestion.correctTense) {
                 score++;
+                tenseStats[currentQuestion.correctTense].correct++;
                 feedback.className = 'feedback correct show';
                 feedbackTitle.textContent = '✅ Correct!';
                 feedbackText.innerHTML = `
                     <strong>Tense:</strong> ${currentQuestion.correctTense}<br>
                     <strong>Type:</strong> ${currentQuestion.type} tense<br>
                     <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                    <strong>📝 Grammatical Formula:</strong><br>
+                    <code style="background: #e8f5e9; padding: 8px; display: block; border-radius: 5px; margin: 10px 0;">${currentQuestion.formula}</code><br>
                     <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
                     ${currentQuestion.reason}<br><br>
                     <strong>General usage:</strong><br>
@@ -585,24 +686,56 @@
             } else {
                 feedback.className = 'feedback incorrect show';
                 feedbackTitle.textContent = '❌ Incorrect';
-                feedbackText.innerHTML = `
-                    <strong>Your answer:</strong> ${selectedTense}<br>
-                    <strong>Correct answer:</strong> ${currentQuestion.correctTense}<br>
-                    <strong>Type:</strong> ${currentQuestion.type} tense<br>
-                    <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
-                    <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
-                    ${currentQuestion.reason}<br><br>
-                    <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
-                    ${currentQuestion.explanation}
-                `;
+                
+                // Check if correct answer was in a different category
+                if (selectedCategory !== correctTenseCategory) {
+                    feedbackText.innerHTML = `
+                        <strong>Your answer:</strong> ${selectedTense} (${selectedCategory})<br>
+                        <strong>Correct answer:</strong> ${currentQuestion.correctTense}<br>
+                        <strong>⚠️ Note:</strong> The correct answer is in the <strong>${correctTenseCategory}</strong> category, but you selected from <strong>${selectedCategory}</strong>!<br>
+                        <strong>Type:</strong> ${currentQuestion.type} tense<br>
+                        <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                        <strong>📝 Grammatical Formula:</strong><br>
+                        <code style="background: #f0f0f0; padding: 8px; display: block; border-radius: 5px; margin: 10px 0;">${correctTenseObj.formula}</code><br>
+                        <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.reason}<br><br>
+                        <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.explanation}
+                    `;
+                } else {
+                    feedbackText.innerHTML = `
+                        <strong>Your answer:</strong> ${selectedTense}<br>
+                        <strong>Correct answer:</strong> ${currentQuestion.correctTense}<br>
+                        <strong>Type:</strong> ${currentQuestion.type} tense<br>
+                        <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                        <strong>📝 Grammatical Formula:</strong><br>
+                        <code style="background: #f0f0f0; padding: 8px; display: block; border-radius: 5px; margin: 10px 0;">${correctTenseObj.formula}</code><br>
+                        <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.reason}<br><br>
+                        <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
+                        ${currentQuestion.explanation}
+                    `;
+                }
             }
             
             document.getElementById('score').textContent = score;
             document.getElementById('total').textContent = total;
+            
+            // Check if we've reached the limit
+            if (total >= maxAttempts) {
+                nextBtn.textContent = 'View Results →';
+            }
+            
             nextBtn.classList.add('show');
         }
 
         function loadNewQuestion() {
+            // Check if we've reached the limit
+            if (total >= maxAttempts) {
+                showResults();
+                return;
+            }
+            
             currentQuestion = getRandomQuestion();
             document.getElementById('sentence').textContent = currentQuestion.sentence;
             
@@ -611,20 +744,177 @@
             
             const nextBtn = document.getElementById('nextBtn');
             nextBtn.classList.remove('show');
+            nextBtn.textContent = 'Next Question →';
             
-            // Re-enable all buttons and remove color classes
-            document.querySelectorAll('.tense-btn').forEach(btn => {
-                btn.disabled = false;
-                btn.style.cursor = 'pointer';
-                btn.style.opacity = '1';
-                btn.classList.remove('correct', 'incorrect');
+            // Reset to category selection
+            document.getElementById('categoryButtons').style.display = 'grid';
+            document.getElementById('tenseButtonsContainer').style.display = 'none';
+            selectedCategory = null;
+        }
+        
+        function showResults() {
+            const container = document.querySelector('.container');
+            const endTime = Date.now();
+            const totalTimeSeconds = Math.floor((endTime - startTime) / 1000);
+            const minutes = Math.floor(totalTimeSeconds / 60);
+            const seconds = totalTimeSeconds % 60;
+            
+            const percentage = Math.round((score / total) * 100);
+            
+            let congratsMessage = '';
+            let congratsEmoji = '';
+            if (percentage >= 90) {
+                congratsMessage = 'Outstanding! You\'re a tense master!';
+                congratsEmoji = '🏆';
+            } else if (percentage >= 75) {
+                congratsMessage = 'Great job! You have a strong grasp of English tenses!';
+                congratsEmoji = '🌟';
+            } else if (percentage >= 60) {
+                congratsMessage = 'Good work! Keep practicing to improve!';
+                congratsEmoji = '👍';
+            } else if (percentage >= 50) {
+                congratsMessage = 'Not bad! You\'re making progress!';
+                congratsEmoji = '💪';
+            } else {
+                congratsMessage = 'Keep learning! Practice makes perfect!';
+                congratsEmoji = '📚';
+            }
+            
+            // Build statistics table
+            let pastStatsHTML = '';
+            pastTenses.forEach(tense => {
+                const stats = tenseStats[tense.name];
+                const tensePercent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                pastStatsHTML += `
+                    <tr>
+                        <td>${tense.name}</td>
+                        <td>${stats.correct}/${stats.total}</td>
+                        <td>${tensePercent}%</td>
+                    </tr>
+                `;
             });
+            
+            let presentStatsHTML = '';
+            presentTenses.forEach(tense => {
+                const stats = tenseStats[tense.name];
+                const tensePercent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                presentStatsHTML += `
+                    <tr>
+                        <td>${tense.name}</td>
+                        <td>${stats.correct}/${stats.total}</td>
+                        <td>${tensePercent}%</td>
+                    </tr>
+                `;
+            });
+            
+            let futureStatsHTML = '';
+            futureTenses.forEach(tense => {
+                const stats = tenseStats[tense.name];
+                const tensePercent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                futureStatsHTML += `
+                    <tr>
+                        <td>${tense.name}</td>
+                        <td>${stats.correct}/${stats.total}</td>
+                        <td>${tensePercent}%</td>
+                    </tr>
+                `;
+            });
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="font-size: 3em; margin-bottom: 10px;">${congratsEmoji}</h1>
+                    <h1 style="color: #667eea; margin-bottom: 10px;">Congratulations!</h1>
+                    <h2 style="color: #666; font-size: 1.5em;">${congratsMessage}</h2>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center;">
+                    <h2 style="color: #667eea; margin-bottom: 20px;">📊 Your Results</h2>
+                    <div style="font-size: 2em; color: #333; margin-bottom: 10px;">
+                        <strong>${score} / ${total}</strong>
+                    </div>
+                    <div style="font-size: 1.5em; color: #667eea; margin-bottom: 20px;">
+                        ${percentage}% Correct
+                    </div>
+                    <div style="font-size: 1.2em; color: #666;">
+                        ⏱️ Time: ${minutes}m ${seconds}s
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">⏮️ PAST TENSES</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 5px 0 0 0;">Tense</th>
+                                <th style="padding: 12px; text-align: center;">Correct/Total</th>
+                                <th style="padding: 12px; text-align: center; border-radius: 0 5px 0 0;">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pastStatsHTML}
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">⏸️ PRESENT TENSES</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 5px 0 0 0;">Tense</th>
+                                <th style="padding: 12px; text-align: center;">Correct/Total</th>
+                                <th style="padding: 12px; text-align: center; border-radius: 0 5px 0 0;">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${presentStatsHTML}
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">⏭️ FUTURE TENSES</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 5px 0 0 0;">Tense</th>
+                                <th style="padding: 12px; text-align: center;">Correct/Total</th>
+                                <th style="padding: 12px; text-align: center; border-radius: 0 5px 0 0;">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${futureStatsHTML}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button onclick="location.reload()" style="width: 100%; padding: 15px; font-size: 1.2em; background: #667eea; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    🔄 Try Again
+                </button>
+            `;
+            
+            // Add styling for table rows
+            const style = document.createElement('style');
+            style.textContent = `
+                tbody tr {
+                    border-bottom: 1px solid #ddd;
+                }
+                tbody tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+                tbody tr:hover {
+                    background-color: #e9ecef;
+                }
+                tbody td {
+                    padding: 12px;
+                }
+                tbody td:nth-child(2), tbody td:nth-child(3) {
+                    text-align: center;
+                    font-weight: 600;
+                }
+            `;
+            document.head.appendChild(style);
         }
 
         document.getElementById('nextBtn').onclick = loadNewQuestion;
 
         // Initialize game
-        createButtons();
         loadNewQuestion();
     </script>
 </body>
