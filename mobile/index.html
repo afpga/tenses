@@ -253,6 +253,7 @@
                 name: "Simple Present",
                 type: "Simple",
                 timeframe: "Present",
+                formula: "I/you/we/they + base verb | he/she/it + verb-s/es",
                 examples: [
                     { text: "I work at a bank.", reason: "Permanent situation/job" },
                     { text: "She drinks coffee every morning.", reason: "Daily habit/routine" },
@@ -277,6 +278,7 @@
                 name: "Simple Past",
                 type: "Simple",
                 timeframe: "Past",
+                formula: "subject + verb-ed (regular) | subject + irregular past form (went, saw, ate, etc.)",
                 examples: [
                     { text: "I walked to school yesterday.", reason: "Completed action with specific past time ('yesterday')" },
                     { text: "She lived in Paris for five years.", reason: "Finished period in the past" },
@@ -301,6 +303,7 @@
                 name: "Past Progressive",
                 type: "Progressive",
                 timeframe: "Past",
+                formula: "I/he/she/it + was + verb-ing | you/we/they + were + verb-ing",
                 examples: [
                     { text: "I was watching TV at 8 PM yesterday.", reason: "Action in progress at specific past time" },
                     { text: "She was reading when the phone rang.", reason: "Ongoing action interrupted by another past action" },
@@ -324,6 +327,7 @@
                 name: "Past Perfect",
                 type: "Perfect",
                 timeframe: "Past",
+                formula: "subject + had + past participle (verb-ed or irregular)",
                 examples: [
                     { text: "I had already eaten when she arrived.", reason: "First action (eating) completed before second past action (arrival)" },
                     { text: "She had never seen snow before she moved to Canada.", reason: "Experience (or lack of) up to a past point in time" },
@@ -347,6 +351,7 @@
                 name: "Past Perfect Progressive",
                 type: "Perfect Progressive",
                 timeframe: "Past",
+                formula: "subject + had been + verb-ing",
                 examples: [
                     { text: "I had been working for 10 hours when I finally went home.", reason: "Duration of action up to specific past moment" },
                     { text: "She was tired because she had been running.", reason: "Continuous earlier action caused later past state" },
@@ -369,6 +374,7 @@
                 name: "Present Progressive",
                 type: "Progressive",
                 timeframe: "Present",
+                formula: "I + am + verb-ing | he/she/it + is + verb-ing | you/we/they + are + verb-ing",
                 examples: [
                     { text: "I am writing an email right now.", reason: "Action happening at this moment" },
                     { text: "She is studying for her exam this week.", reason: "Temporary situation in current time period" },
@@ -392,6 +398,7 @@
                 name: "Present Perfect",
                 type: "Perfect",
                 timeframe: "Present",
+                formula: "I/you/we/they + have + past participle | he/she/it + has + past participle",
                 examples: [
                     { text: "I have finished my homework.", reason: "Recently completed with present result (homework is done now)" },
                     { text: "She has lived here for ten years.", reason: "Action started in past, continues to present" },
@@ -415,6 +422,7 @@
                 name: "Present Perfect Progressive",
                 type: "Perfect Progressive",
                 timeframe: "Present",
+                formula: "I/you/we/they + have been + verb-ing | he/she/it + has been + verb-ing",
                 examples: [
                     { text: "I have been studying English for five years.", reason: "Ongoing action from past to present with emphasis on duration" },
                     { text: "She has been working here since January.", reason: "Continuous action from starting point to now" },
@@ -437,6 +445,7 @@
                 name: "Future with Will",
                 type: "Simple",
                 timeframe: "Future",
+                formula: "subject + will + base verb",
                 examples: [
                     { text: "It will rain tomorrow.", reason: "Prediction about future weather" },
                     { text: "I'll help you with that.", reason: "Spontaneous decision/offer made at speaking moment" },
@@ -460,6 +469,7 @@
                 name: "Future with Going To",
                 type: "Simple",
                 timeframe: "Future",
+                formula: "I + am going to + base verb | he/she/it + is going to + base verb | you/we/they + are going to + base verb",
                 examples: [
                     { text: "I'm going to visit my parents next month.", reason: "Pre-planned intention/arrangement" },
                     { text: "She's going to study medicine.", reason: "Decided future plan/intention" },
@@ -483,6 +493,7 @@
                 name: "Future Progressive",
                 type: "Progressive",
                 timeframe: "Future",
+                formula: "subject + will be + verb-ing",
                 examples: [
                     { text: "I will be working at 3 PM tomorrow.", reason: "Action that will be in progress at specific future time" },
                     { text: "This time next week, we'll be lying on a beach.", reason: "Imagining action in progress at future moment" },
@@ -505,6 +516,7 @@
                 name: "Future Perfect",
                 type: "Perfect",
                 timeframe: "Future",
+                formula: "subject + will have + past participle",
                 examples: [
                     { text: "I will have finished this project by Friday.", reason: "Action will be completed before future deadline" },
                     { text: "By 2030, they will have lived here for 20 years.", reason: "Duration will be reached by future point" },
@@ -527,6 +539,7 @@
                 name: "Future Perfect Progressive",
                 type: "Perfect Progressive",
                 timeframe: "Future",
+                formula: "subject + will have been + verb-ing",
                 examples: [
                     { text: "By next month, I will have been working here for five years.", reason: "Duration will be reached by future point" },
                     { text: "In June, we'll have been living in this house for a decade.", reason: "Continuous situation will reach duration milestone" },
@@ -564,7 +577,8 @@
                 type: randomTense.type,
                 timeframe: randomTense.timeframe,
                 reason: randomExample.reason,
-                explanation: randomTense.explanation
+                explanation: randomTense.explanation,
+                formula: randomTense.formula
             };
         }
 
@@ -648,6 +662,8 @@
                     <strong>Tense:</strong> ${currentQuestion.correctTense}<br>
                     <strong>Type:</strong> ${currentQuestion.type} tense<br>
                     <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                    <strong>📝 Grammatical Formula:</strong><br>
+                    <code style="background: #e8f5e9; padding: 8px; display: block; border-radius: 5px; margin: 10px 0;">${currentQuestion.formula}</code><br>
                     <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
                     ${currentQuestion.reason}<br><br>
                     <strong>General usage:</strong><br>
@@ -665,6 +681,8 @@
                         <strong>⚠️ Note:</strong> The correct answer is in the <strong>${correctTenseCategory}</strong> category, but you selected from <strong>${selectedCategory}</strong>!<br>
                         <strong>Type:</strong> ${currentQuestion.type} tense<br>
                         <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                        <strong>📝 Grammatical Formula:</strong><br>
+                        <code style="background: #f0f0f0; padding: 8px; display: block; border-radius: 5px; margin: 10px 0;">${correctTenseObj.formula}</code><br>
                         <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
                         ${currentQuestion.reason}<br><br>
                         <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
@@ -676,6 +694,8 @@
                         <strong>Correct answer:</strong> ${currentQuestion.correctTense}<br>
                         <strong>Type:</strong> ${currentQuestion.type} tense<br>
                         <strong>Timeframe:</strong> ${currentQuestion.timeframe}<br><br>
+                        <strong>📝 Grammatical Formula:</strong><br>
+                        <code style="background: #f0f0f0; padding: 8px; display: block; border-radius: 5px; margin: 10px 0;">${correctTenseObj.formula}</code><br>
                         <strong>Why this example uses ${currentQuestion.correctTense}:</strong><br>
                         ${currentQuestion.reason}<br><br>
                         <strong>General usage of ${currentQuestion.correctTense}:</strong><br>
