@@ -221,7 +221,10 @@
 <body>
     <div class="container">
         <h1>🎯 English Tenses Game</h1>
-        <div class="score">Score: <span id="score">0</span> / <span id="total">0</span></div>
+        <div class="score">
+            Question: <span id="total">0</span> / 50 | 
+            Score: <span id="score">0</span> correct
+        </div>
         
         <div class="sentence-box">
             <div class="sentence" id="sentence"></div>
@@ -563,6 +566,14 @@
         let total = 0;
         let currentQuestion = null;
         let selectedCategory = null;
+        let startTime = Date.now();
+        const maxAttempts = 50;
+        
+        // Track statistics per tense
+        let tenseStats = {};
+        tenses.forEach(tense => {
+            tenseStats[tense.name] = { correct: 0, total: 0 };
+        });
 
         const pastTenses = tenses.filter(t => t.timeframe === "Past");
         const presentTenses = tenses.filter(t => t.timeframe === "Present");
@@ -625,6 +636,8 @@
 
         function checkAnswer(selectedTense) {
             total++;
+            tenseStats[currentQuestion.correctTense].total++;
+            
             const feedback = document.getElementById('feedback');
             const feedbackTitle = document.getElementById('feedbackTitle');
             const feedbackText = document.getElementById('feedbackText');
@@ -656,6 +669,7 @@
             
             if (selectedTense === currentQuestion.correctTense) {
                 score++;
+                tenseStats[currentQuestion.correctTense].correct++;
                 feedback.className = 'feedback correct show';
                 feedbackTitle.textContent = '✅ Correct!';
                 feedbackText.innerHTML = `
@@ -706,10 +720,22 @@
             
             document.getElementById('score').textContent = score;
             document.getElementById('total').textContent = total;
+            
+            // Check if we've reached the limit
+            if (total >= maxAttempts) {
+                nextBtn.textContent = 'View Results →';
+            }
+            
             nextBtn.classList.add('show');
         }
 
         function loadNewQuestion() {
+            // Check if we've reached the limit
+            if (total >= maxAttempts) {
+                showResults();
+                return;
+            }
+            
             currentQuestion = getRandomQuestion();
             document.getElementById('sentence').textContent = currentQuestion.sentence;
             
@@ -718,11 +744,172 @@
             
             const nextBtn = document.getElementById('nextBtn');
             nextBtn.classList.remove('show');
+            nextBtn.textContent = 'Next Question →';
             
             // Reset to category selection
             document.getElementById('categoryButtons').style.display = 'grid';
             document.getElementById('tenseButtonsContainer').style.display = 'none';
             selectedCategory = null;
+        }
+        
+        function showResults() {
+            const container = document.querySelector('.container');
+            const endTime = Date.now();
+            const totalTimeSeconds = Math.floor((endTime - startTime) / 1000);
+            const minutes = Math.floor(totalTimeSeconds / 60);
+            const seconds = totalTimeSeconds % 60;
+            
+            const percentage = Math.round((score / total) * 100);
+            
+            let congratsMessage = '';
+            let congratsEmoji = '';
+            if (percentage >= 90) {
+                congratsMessage = 'Outstanding! You\'re a tense master!';
+                congratsEmoji = '🏆';
+            } else if (percentage >= 75) {
+                congratsMessage = 'Great job! You have a strong grasp of English tenses!';
+                congratsEmoji = '🌟';
+            } else if (percentage >= 60) {
+                congratsMessage = 'Good work! Keep practicing to improve!';
+                congratsEmoji = '👍';
+            } else if (percentage >= 50) {
+                congratsMessage = 'Not bad! You\'re making progress!';
+                congratsEmoji = '💪';
+            } else {
+                congratsMessage = 'Keep learning! Practice makes perfect!';
+                congratsEmoji = '📚';
+            }
+            
+            // Build statistics table
+            let pastStatsHTML = '';
+            pastTenses.forEach(tense => {
+                const stats = tenseStats[tense.name];
+                const tensePercent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                pastStatsHTML += `
+                    <tr>
+                        <td>${tense.name}</td>
+                        <td>${stats.correct}/${stats.total}</td>
+                        <td>${tensePercent}%</td>
+                    </tr>
+                `;
+            });
+            
+            let presentStatsHTML = '';
+            presentTenses.forEach(tense => {
+                const stats = tenseStats[tense.name];
+                const tensePercent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                presentStatsHTML += `
+                    <tr>
+                        <td>${tense.name}</td>
+                        <td>${stats.correct}/${stats.total}</td>
+                        <td>${tensePercent}%</td>
+                    </tr>
+                `;
+            });
+            
+            let futureStatsHTML = '';
+            futureTenses.forEach(tense => {
+                const stats = tenseStats[tense.name];
+                const tensePercent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                futureStatsHTML += `
+                    <tr>
+                        <td>${tense.name}</td>
+                        <td>${stats.correct}/${stats.total}</td>
+                        <td>${tensePercent}%</td>
+                    </tr>
+                `;
+            });
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="font-size: 3em; margin-bottom: 10px;">${congratsEmoji}</h1>
+                    <h1 style="color: #667eea; margin-bottom: 10px;">Congratulations!</h1>
+                    <h2 style="color: #666; font-size: 1.5em;">${congratsMessage}</h2>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center;">
+                    <h2 style="color: #667eea; margin-bottom: 20px;">📊 Your Results</h2>
+                    <div style="font-size: 2em; color: #333; margin-bottom: 10px;">
+                        <strong>${score} / ${total}</strong>
+                    </div>
+                    <div style="font-size: 1.5em; color: #667eea; margin-bottom: 20px;">
+                        ${percentage}% Correct
+                    </div>
+                    <div style="font-size: 1.2em; color: #666;">
+                        ⏱️ Time: ${minutes}m ${seconds}s
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">⏮️ PAST TENSES</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 5px 0 0 0;">Tense</th>
+                                <th style="padding: 12px; text-align: center;">Correct/Total</th>
+                                <th style="padding: 12px; text-align: center; border-radius: 0 5px 0 0;">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pastStatsHTML}
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">⏸️ PRESENT TENSES</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 5px 0 0 0;">Tense</th>
+                                <th style="padding: 12px; text-align: center;">Correct/Total</th>
+                                <th style="padding: 12px; text-align: center; border-radius: 0 5px 0 0;">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${presentStatsHTML}
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">⏭️ FUTURE TENSES</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 5px 0 0 0;">Tense</th>
+                                <th style="padding: 12px; text-align: center;">Correct/Total</th>
+                                <th style="padding: 12px; text-align: center; border-radius: 0 5px 0 0;">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${futureStatsHTML}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button onclick="location.reload()" style="width: 100%; padding: 15px; font-size: 1.2em; background: #667eea; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                    🔄 Try Again
+                </button>
+            `;
+            
+            // Add styling for table rows
+            const style = document.createElement('style');
+            style.textContent = `
+                tbody tr {
+                    border-bottom: 1px solid #ddd;
+                }
+                tbody tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+                tbody tr:hover {
+                    background-color: #e9ecef;
+                }
+                tbody td {
+                    padding: 12px;
+                }
+                tbody td:nth-child(2), tbody td:nth-child(3) {
+                    text-align: center;
+                    font-weight: 600;
+                }
+            `;
+            document.head.appendChild(style);
         }
 
         document.getElementById('nextBtn').onclick = loadNewQuestion;
